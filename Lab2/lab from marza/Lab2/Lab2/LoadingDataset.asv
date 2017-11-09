@@ -1,0 +1,20 @@
+clear;
+clc;
+x=load('Dataset.txt');
+for j=1:10
+for i=1:10
+x=x(randperm(size(x,1)),:);
+
+training=x(1:10,:);
+test=x(11:end,1:end);
+
+[targetTest,errorRate]=Checking(training,test);
+error(i)=errorRate/4;
+
+end
+meanError(j)=mean(error)*100;
+end
+plot(meanError);
+title('Error percentage');
+xlabel('Error%');
+ylabel('
