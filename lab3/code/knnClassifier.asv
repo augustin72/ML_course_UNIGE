@@ -1,0 +1,4 @@
+%this file contains the knn classifier function
+
+
+function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset)
