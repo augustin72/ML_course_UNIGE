@@ -59,12 +59,11 @@ errorRate;
 
 %This is what we have to compute for the exercice :
 
-the quality indexes for binary classification: accuracy or error rate, selectivity/specificity,
-precision/recall, F1 measure
-on 10 tasks: each digit vs the remaining 9 (i.e., recognize whether the observation is a 1 or not; 
-recognize whether it is a 2 or not; ...; recognize whether it is a 0 or not)
-for several values of k, e.g., k=1,2,3,4,5,6,8,10,15,20,30,40,50 
-(you can use other numbers and you can also implement the rule: "k should not be divisible by the number of classes," to avoid ties).
+% the quality indexes for binary classification: accuracy or error rate, selectivity/specificity,
+% precision/recall, F1 measure
+% on 10 tasks: each digit vs the remaining 9 (i.e., recognize whether the observation is a 1 or not; 
+% recognize whether it is a 2 or not; ...; recognize whether it is a 0 or not)
+% for several values of k, e.g., k=1,2,3,4,5,6,8,10,15,20,30,40,50 
 
 
 
