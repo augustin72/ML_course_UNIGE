@@ -2,17 +2,17 @@
 
 
 function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset, k)
-%here we have the descritpion of the function
+    %here we have the descritpion of the function
 
 
-%Here the code
-
-%First we neex to do the basic checks
-%====== PARAMETERS CHECKS =======
-%   1: check number of colomn
+    %First we neex to do the basic checks
+    %====== PARAMETERS CHECKS =======
+    %   1: check number of colomn
     [numberOfRowForTrainingSet, numberOfColForTrainingSet] = size(trainingDataset);
     
     [numberOfRowForTestSet, numberOfColForTestSet] = size(testDataset);
+    
+    numberOfFeatures = numberOfColForTrainingSet -1;
     
     if (numberOfColForTestSet +1 < numberOfColForTrainingSet) 
         targetTest = 0;
@@ -21,24 +21,7 @@ function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset, k)
         return;
     end
     
-    %   2: check that the training set doesn't contains values smaller or
-    %   eaqual to 0.
-    if( find(trainingDataset<1) > 0)
-        targetTest = 0;
-        errorRate = 'Training set contains one or many values < 1';
-        %disp('we just gave a value to return');
-        return;
-    end
     
-    %   check that the test Dataset set doesn't contains values smaller or
-    %   eaqual to 0.
-    if( find(testDataset<1) > 0)
-        targetTest = 0;
-        errorRate = 'Test dataset contains one or many values < 1';
-        %disp('we just gave a value to return');
-        return;
-    end
-   
     %Check that k>0 and k<=cardinality of the training set (number of rows) :
     if ( (k <= 0 )|| ( k > numberOfRowForTrainingSet) )
         targetTest = 0;
@@ -47,7 +30,7 @@ function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset, k)
     end
       
     %First we check if the test set contains the target colomn are not :
-    if(columnTraining == columnTest)
+    if(numberOfColForTrainingSet == numberOfColForTestSet)
         testSetContainsTarget = 1;
         %disp('test set contains a target value');
         %Here we will do a little test to be sure that the training set target and
@@ -62,31 +45,85 @@ function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset, k)
             return;
         else
             testAndTrainingHaveSameTargetValues = 1;
+            testDataSetWithoutTarget = testDataset(:,1:numberOfFeatures);
         end
 
-    else if (columnTraining == (columnTest + 1))
+    else if (numberOfColForTrainingSet == (numberOfColForTestSet + 1))
         testSetContainsTarget = 0;
+        testDataSetWithoutTarget = testDataset;
         end
     end
     %This check will be used later to see if we need to compute the error
     %rate or not
         
-%====== END PARAMETERS CHECKS =======
+    %here we do an extra check, we verify if k is divisible by the number
+    %of classes in the trainingSet. If it is, then we could have a cas
+    %where two target can be given to a point from the test set, so we want
+    %to avoid this situation :
+    allTrainingSetTarget = unique(trainingDataset(:,end));
+    if ( mod(k,length(allTrainingSetTarget)) == 0)
+        targetTest = 0;
+        errorRate = 'k is divisible by the number of possible target in training set !';
+        return;
+    end
+        
+    %====== END PARAMETERS CHECKS =======
 
-%====== START CLASSIFICATION ========
+    %====== START CLASSIFICATION ========
     computedTarget = ones(numberOfRowForTestSet, 1);
 
-
     for i=1:numberOfRowForTestSet
+        currentPointToClassify = testDataSetWithoutTarget(i,:);
+        %Compute the distances :
+        distanceMatrix = pdist2(currentPointToClassify,trainingDataset(:,1:numberOfFeatures));
+        %Now we create a new matrix containing the distance to each
+        %observation of the training set, and the target of this
+        %observation
+        distanceAndAssociatedTarget = [transpose(distanceMatrix) trainingDataset(:,end)];
 
-        currentPointToClassify = testDataset(i,:);
-
+        %Now we sort this matrix, so the smallest distance will be the
+        %first ones
+        distanceAndAssociatedTarget = sortrows(distanceAndAssociatedTarget);
+        
+        %Now we just need to take the k first lines of this matrix, and
+        %find wich target is the most represented
+        kClosestObservationsTarget = distanceAndAssociatedTarget(1:k,end);
+        targetForCurrentPoint = mode(kClosestObservationsTarget);
+        computedTarget(i,1)=targetForCurrentPoint;
     end
 
-%====== END CLASSIFICATION ========
+    targetTest = computedTarget(:,1);
+    
+    %====== END CLASSIFICATION ========
 
+    %====== ERROR RATE ======== BEGIN
     
+    %This part is only applyed if the test set contains a target colomn
+    if testSetContainsTarget==1
+        %we will look at all the points from the test set, and compare the
+        %value found by the bayes classifier, with the real target value.
+        numberOfCorrectlyClassifiedPoints=0;
+        
+        %This loop go throw the test set and compare the etimated target
+        %with the real one. We increase the
+        %numberOfCorrectlyClassifiedPoints if the target found was correct
+        for i=1:numberOfRowForTestSet
+            if (testDataset(i,end)==targetTest(i,1))
+                numberOfCorrectlyClassifiedPoints = numberOfCorrectlyClassifiedPoints +1;
+            end
+        end
+        %now we just compute the percentage
+        percentageOfCorrectlyClassifiedPoints = numberOfCorrectlyClassifiedPoints / numberOfRowForTestSet;
+        errorRate = 1 - percentageOfCorrectlyClassifiedPoints;
+    else
+        
+        %If we do not have the target for the test set, then we set the
+        %error rate to 2.
+        errorRate = 2;
+    end
     
+    %====== ERROR RATE ====== END
+
 end
 
 
