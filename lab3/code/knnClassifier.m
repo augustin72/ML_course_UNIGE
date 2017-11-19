@@ -45,15 +45,31 @@ function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset, k)
         errorRate = 'k value is inadequate (k <= 0 OR k > numberOfRowForTrainingSet)';
         return;
     end
-    
-    
-    %this is just to know if the test set contains a target
-    if(numberOfColForTrainingSet == numberOfColForTestSet)
+      
+    %First we check if the test set contains the target colomn are not :
+    if(columnTraining == columnTest)
         testSetContainsTarget = 1;
-    else
+        %disp('test set contains a target value');
+        %Here we will do a little test to be sure that the training set target and
+        %the test set target have the same possible values :
+        allTestSetTarget = unique(testDataset(:,end));
+        allTrainingSetTarget = unique(trainingDataset(:,end));
+        
+        testIsMember = ismember(allTestSetTarget, allTrainingSetTarget);
+        if( find(testIsMember==0) > 0)
+            targetTest = 0;
+            errorRate = 'Training set and test set have different target values';
+            return;
+        else
+            testAndTrainingHaveSameTargetValues = 1;
+        end
+
+    else if (columnTraining == (columnTest + 1))
         testSetContainsTarget = 0;
+        end
     end
-    
+    %This check will be used later to see if we need to compute the error
+    %rate or not
         
 %====== END PARAMETERS CHECKS =======
 
