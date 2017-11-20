@@ -125,28 +125,33 @@ function [targetTest,errorRate,confusionMatrix] = knnClassifierWithAnalyze(train
     %====== ERROR RATE ====== END
     
     %====== CONFUSION MATRIX ======= BEGIN
-    numberOfTestTarget = length(allTestSetTarget);
-    confusionMatrix = zeros(numberOfTestTarget,numberOfTestTarget);
+    confusionMatrix = zeros(2,2);
     
     realClass = testDataset(:,end);
     classounfByClassifier = targetTest(:,1);
     
     for i=1:numberOfRowForTestSet
-       if ((classounfByClassifier(i,1) == -1)&&(realClass(i,1)== -1))
+       if ((classounfByClassifier(i,1) == -1)&&(realClass(i,1)== -1))   %True Negative
            confusionMatrix(1,1)=confusionMatrix(1,1)+1;
        end
-       if ((classounfByClassifier(i,1) == -1)&&(realClass(i,1)== 1))
+       if ((classounfByClassifier(i,1) == -1)&&(realClass(i,1)== 1))    %Flase negative
            confusionMatrix(1,2)=confusionMatrix(1,2)+1;
        end
-       if ((classounfByClassifier(i,1) == 1)&&(realClass(i,1)== -1))
+       if ((classounfByClassifier(i,1) == 1)&&(realClass(i,1)== -1))    %False Positive
            confusionMatrix(2,1)=confusionMatrix(2,1)+1;
        end
-       if ((classounfByClassifier(i,1) == 1)&&(realClass(i,1)== 1))
+       if ((classounfByClassifier(i,1) == 1)&&(realClass(i,1)== 1))     %True positive
            confusionMatrix(2,2)=confusionMatrix(2,2)+1;
        end
     end
     
-    
-    
+%                     Real value
+%             |    -1     |   1
+%     ================================
+%             |    TN     |   FN
+%          -1 |           |
+% predicted===========================
+%             |    FP     |   TP
+%          1  |           |
 
 end
