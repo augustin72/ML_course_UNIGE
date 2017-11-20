@@ -66,6 +66,34 @@ errorRate;
 % for several values of k, e.g., k=1,2,3,4,5,6,8,10,15,20,30,40,50 
 
 
+%To make all these computations we will build a confusion matrix, and
+%compute the indicators. 
+
+%At first, we will make the confusion matrix for only one k value, k = 3,
+%and one binary test : with the second class of the fullDataSet
+
+%At first, we create a matrix with a target containg binary values
+%indicating if the observation is from the second class or not
+binaryMatrixForSecondClass = [fullDataSet(:,1:numberOfFeatureAndTargetcol-1) ones(numberOfObservations,1)];
+for i=1:numberOfObservations
+    if fullDataSet(i,end)== 2
+        binaryMatrixForSecondClass(i,end)=1;
+    else
+        binaryMatrixForSecondClass(i,end)=-1;
+    end
+end
+
+%Now we sample our dataset in two set : trainingset and testset :
+numelementsInTrainingSet = ceil(numberOfObservations*0.8);
+indices = randperm(length(binaryMatrixForSecondClass)); %here we create a vector of all mixed numbers from 1 to (size of dataset1)
+trainingSetIndex = indices(1:numelementsInTrainingSet);
+testSetIndex = indices(numelementsInTrainingSet+1:end);
+trainingSet=binaryMatrixForSecondClass(trainingSetIndex,:);
+testSet = binaryMatrixForSecondClass(testSetIndex,1:numberOfFeatureAndTargetcol);
+[targetTest,errorRate, confusionMatrix] = knnClassifierWithAnalyze(trainingSet, testSet, 3);
+targetTest;
+errorRate;
+confusionMatrix;
 
 
 
