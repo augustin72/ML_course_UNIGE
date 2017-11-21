@@ -66,7 +66,11 @@ function [targetTest,errorRate,confusionMatrix] = knnClassifierWithAnalyze(train
         errorRate = 'k is divisible by the number of possible target in training set !';
         return;
     end
-        
+    
+    allTrainingSetTarget = unique(trainingDataset(:,end));
+    testIF = ismember([-1 1], allTrainingSetTarget);
+    testONLYIF = ismember(allTrainingSetTarget,[-1 1]);
+
     %====== END PARAMETERS CHECKS =======
 
     %====== START CLASSIFICATION ========
