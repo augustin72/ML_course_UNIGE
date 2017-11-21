@@ -2,8 +2,8 @@
 
 
 function [targetTest,errorRate] = knnClassifier(trainingDataset, testDataset, k)
-    %here we have the descritpion of the function
-
+    %This function perform a knn classification based on the two parameters
+    %it takes
 
     %First we neex to do the basic checks
     %====== PARAMETERS CHECKS =======

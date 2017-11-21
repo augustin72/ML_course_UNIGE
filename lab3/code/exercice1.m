@@ -1,7 +1,7 @@
 %This file contains the script for to launch to test the function
 
-% clear;  %clean memomry
-% clc;    %clean screen
+clear;  %clean memomry
+clc;    %clean screen
 
 
 %this script will load the dataset and separate the 
@@ -138,52 +138,53 @@ fullDataSet = [x,tt];
 
 
 %=== SCRIPT ====
-% 
-% krange = [1 3 5 7 9 11 15 21 31 41 51];
-% numberForAverage = 50;
-% resultMatrixForManyk = zeros(10, 6,length(krange));
-% 
-% for m=1:length(krange)
-%     fprintf(' k = %d\n',krange(m));
-%     resultMatrix = zeros(10,6);
-%     %this resultMatrix will contain 
-%     %[errorRate2, sensitivity, specificity,precision, recall, F1] for each
-%     %class
-% 
-%     for i=1:10
-%     fprintf(' class = %d\n',i);
-%         %first, we build the bninary matrix as before
-%         binaryMatrix = [fullDataSet(:,1:numberOfFeatureAndTargetcol-1) ones(numberOfObservations,1)];
-%         for j=1:numberOfObservations
-%             if fullDataSet(j,end)== i
-%                 binaryMatrix(j,end)=1;
-%             else
-%                 binaryMatrix(j,end)=-1;
-%             end
-%         end
-% 
-%         numelementsInTrainingSet = ceil(numberOfObservations*0.8);
-%         tempMatrixForAverage = ones(numberForAverage,6);
-%         for counterForAverrage=1:numberForAverage
-%             
-%             indices = randperm(length(binaryMatrix)); %here we create a vector of all mixed numbers from 1 to (size of dataset1)
-%             trainingSetIndex = indices(1:numelementsInTrainingSet);
-%             testSetIndex = indices(numelementsInTrainingSet+1:end);
-%             trainingSet=binaryMatrix(trainingSetIndex,:);
-%             testSet = binaryMatrix(testSetIndex,:);
-%             [targetTest,errorRate, confusionMatrix] = knnClassifierWithAnalyze(trainingSet, testSet, krange(m));
-%             [errorRate2, sensitivity, specificity, precision, recall, F1] = analyzeConfusionMatrix(confusionMatrix);
-%             tempMatrixForAverage(counterForAverrage,:)= [errorRate2, sensitivity, specificity, precision, recall, F1];
-%         end
-%         
-%         resultMatrix(i,:)=mean(tempMatrixForAverage);
-% 
-%     end
-%     
-%     resultMatrixForManyk(:,:,m)=resultMatrix;
-%     
-%     
-% end
+
+
+krange = [1 3 5 7 9 11 15 21 31 41 51];
+numberForAverage = 1;
+resultMatrixForManyk = zeros(10, 6,length(krange));
+
+for m=1:length(krange)
+    fprintf(' k = %d\n',krange(m));
+    resultMatrix = zeros(10,6);
+    %this resultMatrix will contain 
+    %[errorRate2, sensitivity, specificity,precision, recall, F1] for each
+    %class
+
+    for i=1:10
+    fprintf(' class = %d\n',i);
+        %first, we build the bninary matrix as before
+        binaryMatrix = [fullDataSet(:,1:numberOfFeatureAndTargetcol-1) ones(numberOfObservations,1)];
+        for j=1:numberOfObservations
+            if fullDataSet(j,end)== i
+                binaryMatrix(j,end)=1;
+            else
+                binaryMatrix(j,end)=-1;
+            end
+        end
+
+        numelementsInTrainingSet = ceil(numberOfObservations*0.8);
+        tempMatrixForAverage = ones(numberForAverage,6);
+        for counterForAverrage=1:numberForAverage
+            
+            indices = randperm(length(binaryMatrix)); %here we create a vector of all mixed numbers from 1 to (size of dataset1)
+            trainingSetIndex = indices(1:numelementsInTrainingSet);
+            testSetIndex = indices(numelementsInTrainingSet+1:end);
+            trainingSet=binaryMatrix(trainingSetIndex,:);
+            testSet = binaryMatrix(testSetIndex,:);
+            [targetTest,errorRate, confusionMatrix] = knnClassifierWithAnalyze(trainingSet, testSet, krange(m));
+            [errorRate2, sensitivity, specificity, precision, recall, F1] = analyzeConfusionMatrix(confusionMatrix);
+            tempMatrixForAverage(counterForAverrage,:)= [errorRate2, sensitivity, specificity, precision, recall, F1];
+        end
+        
+        resultMatrix(i,:)=mean(tempMatrixForAverage);
+
+    end
+    
+    resultMatrixForManyk(:,:,m)=resultMatrix;
+    
+    
+end
 
 
 %Finaly we will build 6 graph representing the evolution of one parameter
@@ -196,9 +197,9 @@ fullDataSet = [x,tt];
 %save('saveresultMatrixForManyk.mat','resultMatrixForManyk');
 
 %Here the code to use these values :
-example = matfile('saveresultMatrixForManyk.mat');
-matrixFromSave = example.resultMatrixForManyk;
-resultMatrixForManyk = matrixFromSave;
+% example = matfile('saveresultMatrixForManyk.mat');
+% matrixFromSave = example.resultMatrixForManyk;
+% resultMatrixForManyk = matrixFromSave;
 
 %Just to remember : resultMatrixForManyk = zeros(number of classes, parameter , k);
 %==========
